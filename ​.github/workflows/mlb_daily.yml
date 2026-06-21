@@ -1,0 +1,36 @@
+name: Predicción Diaria de MLB
+
+on:
+  schedule:
+    - cron: '0 14 * * *' # Corre todos los días a las 8:00 AM CST (14:00 UTC)
+  workflow_dispatch: # Activa el botón mágico para probar de inmediato manualmente
+
+jobs:
+  run-predictor:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # 🔑 Otorga permiso a la máquina para subir el index.html al repositorio
+    
+    steps:
+      - name: Checkout del código
+        uses: actions/checkout@v4
+        
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+          
+      - name: Instalar dependencias
+        run: pip install requests
+        
+      - name: Ejecutar el predictor de MLB
+        run: python mlb_predictor.py
+        
+      - name: Publicar cambios en GitHub Pages
+        run: |
+          git config --local user.name "github-actions[bot]"
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          # Si el archivo no cambió, evitamos que rompa la ejecución con el operador '|| true'
+          git commit -m "Actualización automática: Predicción del día [skip ci]" || true
+          git push
