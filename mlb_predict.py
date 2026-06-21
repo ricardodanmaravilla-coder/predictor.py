@@ -129,4 +129,3 @@ Cálculo basado en carreras promedio anotadas/permitidas y el Teorema Pitagóric
 
 if __name__ == "__main__":
     obtener_prediccion_avanzada()
-    
